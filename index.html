@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡包选择</title>
+    <style>
+        body {
+            background-color: #242424;
+            color: #aaaaaa;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #999;
+        }
+
+        .stats span.value {
+            color: #fff;
+        }
+
+        .reset-btn {
+            background-color: #333333;
+            color: #888888;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 50px;
+        }
+
+        .reset-btn:hover {
+            background-color: #444;
+            color: #ccc;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 2vw;
+        }
+
+        @media (min-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                gap: 12px;
+            }
+        }
+
+        .grid-btn {
+            background-color: #0b4a99;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            aspect-ratio: 1.2 / 1;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .grid-btn:active {
+            transform: scale(0.95);
+        }
+
+        .grid-btn.selected {
+            background-color: #c9352b;
+            cursor: not-allowed;
+            color: #f0f0f0;
+        }
+
+        .grid-btn.selected:active {
+            transform: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="stats">
+            <div>总卡包: <span class="value" id="total">120</span></div>
+            <div>已选: <span class="value" id="selected">0</span></div>
+            <div>剩余可抢: <span class="value" id="remaining">120</span></div>
+
+            <button class="reset-btn" id="resetBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                </svg>
+                全部重置 (清空所有选择)
+            </button>
+        </div>
+
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <script>
+        const totalPacks = 120;
+        let selectedCount = 0;
+
+        const selectedEl = document.getElementById('selected');
+        const remainingEl = document.getElementById('remaining');
+        const gridEl = document.getElementById('grid');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function updateStats() {
+            selectedEl.textContent = selectedCount;
+            remainingEl.textContent = totalPacks - selectedCount;
+        }
+
+        function handleButtonClick(e) {
+            const btn = e.target;
+            if (!btn.classList.contains('selected')) {
+                btn.classList.add('selected');
+                selectedCount++;
+                updateStats();
+            }
+        }
+
+        function initGrid() {
+            gridEl.innerHTML = '';
+            for (let i = 1; i <= totalPacks; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'grid-btn';
+                btn.textContent = i;
+                btn.addEventListener('click', handleButtonClick);
+                gridEl.appendChild(btn);
+            }
+        }
+
+        resetBtn.addEventListener('click', () => {
+            selectedCount = 0;
+            updateStats();
+            document.querySelectorAll('.grid-btn.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        });
+
+        initGrid();
+        updateStats();
+    </script>
+</body>
+
+</html>
